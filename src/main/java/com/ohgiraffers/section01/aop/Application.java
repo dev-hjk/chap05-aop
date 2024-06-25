@@ -14,6 +14,8 @@ public class Application {
 
         System.out.println("findAllMembers ======================");
         System.out.println(memberService.findAllMembers());
+        System.out.println("findMemberById ======================================");
+        System.out.println(memberService.findMemberById(1L));
 
 
     }
