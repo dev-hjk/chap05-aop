@@ -38,7 +38,7 @@ public class LoggingAspect {
             System.out.println("After joinPoint.getArgs()[0] : " + joinPoint.getArgs()[0]);
         }
     }
-
+    //
     //속성들을 여러개 써야 할 때는 무조건 앞에 속성을 써줘야함!
     //@AfterReturning :
     @AfterReturning(pointcut = "logPointcut()", returning = "result")
