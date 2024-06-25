@@ -1,9 +1,6 @@
 package com.ohgiraffers.section02.reflection;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 
 public class Application {
 
@@ -25,46 +22,48 @@ public class Application {
         Class class2 = new Account().getClass();
         System.out.println("class2 = " + class2);
 
-        try {
+
             //필기
             // 동적 로딩(런타임 시 로딩) : 자바는 동적로딩을 지원
             // 동적 로딩의 장점: 코드 로딩할게 많아지면 스타트가 길어지는데, 동적 로딩을 하면 코드를 만난 시점부터 코드를 사용할 수 있게 로딩
             // ->즉, 최초 실행하는 속도가 빨라짐
-            Class class3 =Class.forName("com.ohgiraffers.section02.reflection.Account");
-            System.out.println("class3 = " + class3);
+            try {
+                //동적 로딩 (런타임 시 로딩)
+                Class class3 = Class.forName("com.ohgiraffers.section02.reflection.Account");
+                System.out.println("class3 = " + class3);
 
-            Class class4 = Class.forName("[D");
-            System.out.println("class4 = " + class4);
+                Class class4 = Class.forName("[D");
+                System.out.println("class4 = " + class4);
 
-            Class class5 = double[].class;
-            System.out.println("class5 = " + class5);
+                Class class5 = double[].class;
+                System.out.println("class5 = " + class5);
 
-            Class class6 = Class.forName("[Ljava.lang.String;");
-            System.out.println("class6 = " + class6);
+                Class class6 = Class.forName("[Ljava.lang.String;");
+                System.out.println("class6 = " + class6);
 
-            Class class7 = String[].class;
-            System.out.println("class7 = " + class7);
+                Class class7 = String[].class;
+                System.out.println("class7 = " + class7);
 
-            Class superClass = class1.getSuperclass();
-            System.out.println("superClass = " + superClass);
+                Class superClass = class1.getSuperclass();
+                System.out.println("superClass = " + superClass);
 
 
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
 
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-        //  필드 정보 반환
+        // 필드 정보 반환
         Field[] fields = Account.class.getDeclaredFields();
         for(Field field : fields) {
             System.out.println("modifiers = " + Modifier.toString(field.getModifiers()));
             System.out.println("type = " + field.getType());
             System.out.println("name = " + field.getName());
         }
-        // 생성자 정보 확인
+
+        //생성자 정보 확인
         Constructor[] constructors = Account.class.getDeclaredConstructors();
         for(Constructor constructor : constructors) {
-            System.out.println("name: " + constructor.getName());
+            System.out.println("name : " + constructor.getName());
             Class[] params = constructor.getParameterTypes();
             for(Class param : params) {
                 System.out.println("paramType = " + param.getTypeName());
@@ -72,7 +71,7 @@ public class Application {
         }
 
         try {
-            Account acc = (Account) constructors[0].newInstance("20","110-123-456789", "1234", 10000);
+            Account acc = (Account) constructors[0].newInstance("20", "110-123-456789", "1234", 10000);
             System.out.println(acc.getBalance());
 
         } catch (InstantiationException e) {
@@ -84,7 +83,27 @@ public class Application {
         }
 
         // 메소드 정보에 접근
+        Method[] methods = Account.class.getMethods();
+        Method getBalanceMethod = null;
+        for(Method method : methods) {
+            System.out.println(Modifier.toString(method.getModifiers()) + " "
+                    + method.getReturnType().getSimpleName() + " "
+                    + method.getName());
 
+            if("getBalance".equals(method.getName())) {
+                getBalanceMethod = method;
+            }
+        }
+
+        try {
+            System.out.println(getBalanceMethod.invoke(((Account) constructors[2].newInstance())));
+
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        }
     }
-
 }
